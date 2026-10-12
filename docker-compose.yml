@@ -1,0 +1,26 @@
+# Local stack: API + Prometheus + Grafana
+# docker compose up --build
+#   API        http://localhost:8000/docs
+#   Prometheus http://localhost:9090
+#   Grafana    http://localhost:3000  (admin / admin)
+services:
+  api:
+    build: .
+    image: heart-api:1.0
+    ports: ["8000:8000"]
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports: ["9090:9090"]
+    depends_on: [api]
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./monitoring/grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:ro
+    ports: ["3000:3000"]
+    depends_on: [prometheus]

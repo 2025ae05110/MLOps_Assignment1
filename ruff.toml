@@ -1,0 +1,7 @@
+line-length = 110
+target-version = "py311"
+exclude = [".venv", "venv", "mlruns", "notebooks", ".git", "__pycache__"]
+
+[lint]
+select = ["E", "F", "W", "I"]
+ignore = ["I001"]

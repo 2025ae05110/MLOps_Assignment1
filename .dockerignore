@@ -1,0 +1,12 @@
+.git
+.github
+mlruns
+data
+reports
+notebooks
+screenshots
+tests
+__pycache__
+*.pyc
+.venv
+.DS_Store

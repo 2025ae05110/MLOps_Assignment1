@@ -1,0 +1,29 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# MLflow
+mlruns/
+mlartifacts/
+mlflow.db
+
+# Raw / generated data (not committed)
+data/raw/
+reports/runs/
+models/*.joblib
+
+# CI artefacts
+test-results.xml
+training.log
+
+# Raw zip / extracted folder (data already in data/raw/ or data/processed/)
+heart+disease/
+heart+disease.zip
+
+# macOS / IDE
+.DS_Store
+.idea/
+.vscode/
