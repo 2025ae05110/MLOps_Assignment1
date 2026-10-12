@@ -8,7 +8,10 @@ WORKDIR /app
 
 # Install only what serving needs (layer cached unless requirements change)
 COPY requirements-serve.txt .
-RUN pip install --no-cache-dir -r requirements-serve.txt
+RUN pip install --no-cache-dir \
+    --trusted-host pypi.org \
+    --trusted-host files.pythonhosted.org \
+    -r requirements-serve.txt
 
 COPY src/ src/
 COPY api/ api/
