@@ -11,7 +11,8 @@
       "best_params": {
         "clf__C": 1,
         "clf__class_weight": null
-      }
+      },
+      "run_id": "0257cd2808fb4a1dbac4b4c63a8dc2a3"
     },
     "random_forest": {
       "cv_roc_auc": 0.8980023197414502,
@@ -24,7 +25,8 @@
         "clf__max_depth": 5,
         "clf__min_samples_leaf": 1,
         "clf__n_estimators": 400
-      }
+      },
+      "run_id": "7d0aa80a562648198026cf736168745f"
     },
     "gradient_boosting": {
       "cv_roc_auc": 0.8753854036462732,
@@ -37,7 +39,8 @@
         "clf__learning_rate": 0.05,
         "clf__max_depth": 3,
         "clf__n_estimators": 100
-      }
+      },
+      "run_id": "792705bf94404f94952f482c8b58c5cd"
     }
   }
 }

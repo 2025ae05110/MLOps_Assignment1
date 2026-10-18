@@ -89,9 +89,9 @@ def main() -> dict:
     mlflow.set_experiment("heart-disease-classification")
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)
 
-    results, best_name, best_model = {}, None, None
+    results, best_name, best_model, best_run_id = {}, None, None, None
     for name, (clf, grid) in CANDIDATES.items():
-        with mlflow.start_run(run_name=name):
+        with mlflow.start_run(run_name=name) as run:
             pipe = Pipeline([("prep", build_preprocessor()), ("clf", clf)])
             search = GridSearchCV(pipe, grid, cv=cv, scoring="roc_auc", n_jobs=-1)
             search.fit(X_train, y_train)
@@ -110,12 +110,20 @@ def main() -> dict:
                 serialization_format=mlflow.sklearn.SERIALIZATION_FORMAT_CLOUDPICKLE)
 
             results[name] = {"cv_roc_auc": search.best_score_, **test_metrics,
-                             "best_params": search.best_params_}
+                             "best_params": search.best_params_,
+                             "run_id": run.info.run_id}
+            mlflow.set_tag("best_model", "false")
             print(f"{name:20s} cv_auc={search.best_score_:.3f} "
                   f"test_auc={test_metrics['roc_auc']:.3f} recall={test_metrics['recall']:.3f}")
             # select on CV score, not test score, to avoid tuning on the test set
             if best_name is None or search.best_score_ > results[best_name]["cv_roc_auc"]:
                 best_name, best_model = name, search.best_estimator_
+                best_run_id = run.info.run_id
+
+    # ── Tag the winning run so it stands out in the MLflow UI ──────────────
+    client = mlflow.MlflowClient()
+    client.set_tag(best_run_id, "best_model", "true")
+    client.set_tag(best_run_id, "selected_reason", "highest_cv_roc_auc")
 
     MODEL_DIR.mkdir(exist_ok=True)
     joblib.dump(best_model, MODEL_DIR / "model.joblib")
