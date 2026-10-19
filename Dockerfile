@@ -6,7 +6,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Install only what serving needs (layer cached unless requirements change)
 COPY requirements-serve.txt .
 RUN pip install --no-cache-dir \
     --trusted-host pypi.org \
@@ -17,7 +16,6 @@ COPY src/ src/
 COPY api/ api/
 COPY models/model.joblib models/model.joblib
 
-# Run as non-root
 RUN useradd --create-home appuser
 USER appuser
 

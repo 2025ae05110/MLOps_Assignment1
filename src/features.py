@@ -4,11 +4,11 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-# Continuous measurements -> impute median, scale
+# continuous features: median impute + scale
 NUMERIC = ["age", "trestbps", "chol", "thalach", "oldpeak"]
-# Already 0/1 -> impute most frequent, pass through unscaled
+# binary 0/1 flags: most-frequent impute, no scaling needed
 BINARY = ["sex", "fbs", "exang"]
-# Codes with no natural order -> impute most frequent, one-hot
+# nominal codes: most-frequent impute + one-hot encode
 CATEGORICAL = ["cp", "restecg", "slope", "ca", "thal"]
 
 FEATURES = NUMERIC + BINARY + CATEGORICAL
@@ -22,7 +22,6 @@ def build_preprocessor() -> ColumnTransformer:
     binary = SimpleImputer(strategy="most_frequent")
     categorical = Pipeline([
         ("impute", SimpleImputer(strategy="most_frequent")),
-        # ignore unseen codes at serving time instead of crashing
         ("onehot", OneHotEncoder(handle_unknown="ignore")),
     ])
     return ColumnTransformer([

@@ -85,3 +85,18 @@ jobs:
         with:
           name: smoke-test
           path: prediction.json
+
+      - name: Log in to Docker Hub
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Tag and push Docker image
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          docker tag heart-api:${{ github.sha }} ${{ vars.DOCKERHUB_USERNAME }}/heart-api:latest
+          docker tag heart-api:${{ github.sha }} ${{ vars.DOCKERHUB_USERNAME }}/heart-api:${{ github.sha }}
+          docker push ${{ vars.DOCKERHUB_USERNAME }}/heart-api:latest
+          docker push ${{ vars.DOCKERHUB_USERNAME }}/heart-api:${{ github.sha }}

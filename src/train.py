@@ -115,12 +115,12 @@ def main() -> dict:
             mlflow.set_tag("best_model", "false")
             print(f"{name:20s} cv_auc={search.best_score_:.3f} "
                   f"test_auc={test_metrics['roc_auc']:.3f} recall={test_metrics['recall']:.3f}")
-            # select on CV score, not test score, to avoid tuning on the test set
+            # use CV score for selection to keep test set truly held-out
             if best_name is None or search.best_score_ > results[best_name]["cv_roc_auc"]:
                 best_name, best_model = name, search.best_estimator_
                 best_run_id = run.info.run_id
 
-    # ── Tag the winning run so it stands out in the MLflow UI ──────────────
+    # mark the best run in MLflow so it's easy to find
     client = mlflow.MlflowClient()
     client.set_tag(best_run_id, "best_model", "true")
     client.set_tag(best_run_id, "selected_reason", "highest_cv_roc_auc")

@@ -7,6 +7,7 @@ import logging
 import os
 import time
 import uuid
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 import joblib
@@ -60,19 +61,23 @@ class Prediction(BaseModel):
     model_version: str
 
 
-app = FastAPI(title="Heart Disease Risk API", version="1.0.0")
-Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 model = None
 
 
-@app.on_event("startup")
-def load_model() -> None:
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     global model
     if MODEL_PATH.exists():
         model = joblib.load(MODEL_PATH)
         log.info(json.dumps({"event": "model_loaded", "path": str(MODEL_PATH)}))
     else:
         log.warning(json.dumps({"event": "model_missing", "path": str(MODEL_PATH)}))
+    yield
+    model = None
+
+
+app = FastAPI(title="Heart Disease Risk API", version="1.0.0", lifespan=lifespan)
+Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 
 
 @app.middleware("http")
