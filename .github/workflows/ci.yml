@@ -72,6 +72,8 @@ jobs:
         with:
           name: model-and-reports
           path: .
+      - name: Check downloaded files
+        run: ls -la models/
       - name: Build image
         run: docker build -t heart-api:${{ github.sha }} .
       - name: Smoke test container
@@ -96,7 +98,8 @@ jobs:
       - name: Tag and push Docker image
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
-          docker tag heart-api:${{ github.sha }} ${{ vars.DOCKERHUB_USERNAME }}/heart-api:latest
-          docker tag heart-api:${{ github.sha }} ${{ vars.DOCKERHUB_USERNAME }}/heart-api:${{ github.sha }}
-          docker push ${{ vars.DOCKERHUB_USERNAME }}/heart-api:latest
-          docker push ${{ vars.DOCKERHUB_USERNAME }}/heart-api:${{ github.sha }}
+          DOCKER_USER=$(echo "${{ vars.DOCKERHUB_USERNAME }}" | tr -d '[:space:]')
+          docker tag heart-api:${{ github.sha }} ${DOCKER_USER}/heart-api:latest
+          docker tag heart-api:${{ github.sha }} ${DOCKER_USER}/heart-api:${{ github.sha }}
+          docker push ${DOCKER_USER}/heart-api:latest
+          docker push ${DOCKER_USER}/heart-api:${{ github.sha }}
