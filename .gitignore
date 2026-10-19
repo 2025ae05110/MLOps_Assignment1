@@ -23,6 +23,9 @@ training.log
 heart+disease/
 heart+disease.zip
 
+# Report build artifacts (only .md source and final .pdf are committed)
+report/report.html
+
 # macOS / IDE
 .DS_Store
 .idea/
