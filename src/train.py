@@ -13,7 +13,7 @@ import joblib
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt  
+import matplotlib.pyplot as plt
 import mlflow  # noqa: E402
 import mlflow.sklearn  # noqa: E402
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier  # noqa: E402
